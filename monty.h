@@ -1,5 +1,6 @@
 #ifndef MONTY_H
 #define MONTY_H
+#define _GNU_SOURCE
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -67,6 +68,9 @@ typedef struct Command
 
 extern command_t command;
 
+
+void check_dig(char *);
+void simplify(char *, stack_t **, unsigned int);
 void free_it(stack_t **top);
 void read_from_file(const char *, stack_t **);
 void proccess(char *, stack_t **, unsigned int);

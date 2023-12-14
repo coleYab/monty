@@ -60,3 +60,19 @@ void free_it(stack_t **top)
 		}
 	}
 }
+
+
+/**
+ * simplify - simplifies the code.
+ *
+ * @c: is hte paratamerh.
+ * @top: is hte top elemtne.
+ * @l: is the theing to.
+ *
+ * Return: the main thing.
+*/
+void simplify(char *c, stack_t **top, unsigned int l)
+{
+	find_func(c, top, l);
+	free(c);
+}

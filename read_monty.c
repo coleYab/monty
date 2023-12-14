@@ -55,11 +55,11 @@ void read_from_file(const char *file_name, stack_t **top)
 /**
  * proccess - Function to process commands, remove spaces, and store data.
  *
- * @top: Pointer to the struct to store processed data.
- * @buffer: Input command to be processed.
- * @l: is the current length,
+ * @buffer: Pointer to the struct to store processed data.
+ * @top: Input command to be processed.
+ * @l:is hte number of line evaluated.
  *
- * Return: void or none of nothing.
+ * Return: the asdjhfjds.
  */
 void proccess(char *buffer, stack_t **top, unsigned int l)
 {
@@ -67,16 +67,20 @@ void proccess(char *buffer, stack_t **top, unsigned int l)
 	bool isFinished = false;
 	char *new = malloc(strlen(buffer) + 1);
 
+	command.status = 0, command.optional_param = false;
 	if (!new)
 	{
 		dprintf(STDERR_FILENO, "Error: Malloc failed\n");
 		free(buffer);
 		exit(EXIT_FAILURE);
 	}
-	for (; buffer[i]; i++)
+	while (buffer[i])
 	{
 		if (!isFinished && buffer[i] == ' ')
+		{
+			i++;
 			continue;
+		}
 		if (!isFinished && buffer[i] != ' ')
 			isFinished = true;
 		if (isFinished)
@@ -86,20 +90,32 @@ void proccess(char *buffer, stack_t **top, unsigned int l)
 			else
 			{
 				new[j] = '\0';
-				while (buffer[i] == ' ')
-					i++;
-				if ((buffer[i] == '-' && isdigit(buffer[i + 1])) || isdigit(buffer[i]))
-					command.optional_param = true, command.parameter = atoi(&(buffer[i]));
-				find_func(new, top, l);
-				free(new);
+				check_dig(&buffer[i]);
+				simplify(new, top, l);
 				return;
 			}
 		}
+		else
+			i++, new[j] = '\0';
 	}
-	new[j] = '\0', command.optional_param = false;
-	find_func(new, top, l);
-	free(new);
+	simplify(new, top, l);
 }
+
+/**
+ * check_dig - checks the digit of the inpt.
+ *
+ * @buffer: is the temporary storage.
+ *
+ * Return: nothing.
+*/
+void check_dig(char *buffer)
+{
+	int i = 0;
+
+	if (atoi(&buffer[i]))
+		command.optional_param = true, command.parameter = atoi(&(buffer[i]));
+}
+
 
 
 /**
@@ -124,7 +140,7 @@ void find_func(const char *c, stack_t **top, unsigned int line_number)
 		*{"stack", st_stack}, {"queue", st_queue},*/ {NULL, NULL}
 	};
 	for (i = 0; instructions[i].opcode; i++)
-		if (c && !strcmp(c, instructions[i].opcode))
+		if (c && !strncmp(c, instructions[i].opcode, strlen(instructions[i].opcode)))
 		{
 			instructions[i].f(top, line_number);
 			return;
